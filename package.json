@@ -1,0 +1,22 @@
+{
+  "name": "yapi2js",
+  "version": "1.1.1",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "dayjs": "^1.11.9",
+    "request": "^2.88.2"
+  },
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "bin": {
+    "yapi2js-config-g": "./bin/setGlobal",
+    "yapi2js-config-p": "./bin/setProject",
+    "yapi2js": "./bin/start"
+  },
+  "author": {
+    "name": "XiaoLiLong",
+    "email": "xiaollcn@qq.com"
+  }
+}

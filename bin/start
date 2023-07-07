@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+const { getConfig } = require('../src/util')
+
+// 获取配置
+const config = getConfig()
+if (!config.email) return console.log('读取配置失败。请使用命令配置必填字段: email(yapi登录邮箱)')
+if (!config.password) return console.log('读取配置失败。请使用命令配置必填字段: password(yapi登录密码)')
+if (!config.projectId) return console.log('读取配置失败。请使用命令配置必填字段: projectId(yapi项目id)')
+
+console.log('开始转换...')
+require('../src//app')(config)
