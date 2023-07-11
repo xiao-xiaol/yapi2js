@@ -13,4 +13,5 @@ module.exports = {
     resBodyCol: '名称,类型,备注', // 响应对象注释列，可选项同上
     include: '', // 需要转换的部分模块名称，不传为所有，逗号分割多个模块名称 如果两个都传则先过滤 include 项再过滤 exclude 项
     exclude: '', // 不需要转换的部分模板名称, 同上
+    methodMode: 'options',
 }

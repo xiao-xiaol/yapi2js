@@ -1,5 +1,36 @@
 #!/usr/bin/env node
 
-const { setProjectConfig } = require('../src/util')
+const fs = require('fs')
+const { getCwdProjectName, getProjectConfig, getArgvToObj, getConfigFile, projectConfigPath } = require('../src/util')
 
-setProjectConfig()
+const projectName = getCwdProjectName()
+const allprojectConfig = getProjectConfig()
+const projectConfig = allprojectConfig[projectName] || {}
+
+const argvObj = getArgvToObj({
+    get: {
+        desc: '是否获取项目配置',
+        type: 'boolean'
+    }
+})
+
+if (argvObj.get === true) {
+    console.log(`${projectName}项目配置：`)
+    console.log(projectConfig)
+} else {
+    delete argvObj.get
+    // 读取命令行和配置文件json覆盖到原先的项目配置
+    const config = Object.assign(
+        {},
+        projectConfig,
+        getConfigFile(),
+        argvObj
+    )
+    // 将配置json写回文件
+    allprojectConfig[projectName] = config
+    fs.writeFileSync(
+        projectConfigPath,
+        JSON.stringify(allprojectConfig)
+    )
+    console.log(`设置${projectName}项目配置成功`)
+}

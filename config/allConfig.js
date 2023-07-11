@@ -40,6 +40,9 @@ module.exports = {
         requestFuncPath: {
             desc: '请求方法的导入路径'
         },
+        methodMode: {
+            desc: `http请求方法的模式。'options' | 'method'`
+        },
         outputPath: {
             desc: '输出文件存储地址'
         },

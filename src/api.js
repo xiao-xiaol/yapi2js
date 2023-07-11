@@ -31,9 +31,10 @@ class RequestMethod {
             })
             .replace('{__PATH_PARAMS__}', () => this._getPathParams(req_params))
             .replace('{__URL__}', () => this._getPath(path))
-            .replace('{__METHOD__}', () => method)
+            // .replace('{__METHOD__}', () => method)
             .replace('{PARAMS_OBJECT_PROPERTY}', () => this._getParamsObjectProperty(method))
             .replace('{HTTP_FUNCTION}', () => this.config.requestFuncName)
+            .replace('{METHOD_MODE}', () => this.getMethodMode(data.method))
             .replace('{OTHER_OPTIONS}', () => this.getOtherOptions(data))
 
         return {
@@ -45,15 +46,15 @@ class RequestMethod {
     }
 
     // 方法模板
+    // method: '{__METHOD__}',
     getFunctionTemplate() {
         return `
 
 // {__FUNCTION_NAME} start
 {__COMMENT__}
 export function {__FUNCTION_NAME}({__PATH_PARAMS__}data) {
-    return {HTTP_FUNCTION}({
+    return {HTTP_FUNCTION}{METHOD_MODE}({
         url: '{__URL__}',
-        method: '{__METHOD__}',
         {PARAMS_OBJECT_PROPERTY}: data{OTHER_OPTIONS}
     })
 }
@@ -67,10 +68,24 @@ export function {__FUNCTION_NAME}({__PATH_PARAMS__}data) {
         }
     }
 
-    // 除url、method、(params/data)以外的非必须方法选项
+    // 获取http请求方法 get/post/put/delete
+    getMethod(method) {
+        return (method || '').toLowerCase()
+    }
+
+    getMethodMode(method) {
+        const { methodMode } = this.config
+        if (methodMode === 'options') return ''
+        if (methodMode === 'method') return `.${this.getMethod(method)}`
+    }
+
+    // 除url、(params/data)以外的非必须方法选项(method、responseType)
     getOtherOptions(item) {
+        const { methodMode } = this.config
         const options = [
-            this.getResBlob(item)
+            this.getResBlob(item),
+            // 如果是options模式就把方法添加到选项内
+            methodMode === 'options' ? `method: '${this.getMethod(item.method)}'` : ''
         ]
         const joinSign = `,\n        `
         const str = options.filter(Boolean).join(joinSign)

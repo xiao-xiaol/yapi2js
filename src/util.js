@@ -8,6 +8,9 @@ const { Command } = require('commander');
 const globalConfigPath = path.join(__dirname, '../config/global.config.json')
 const projectConfigPath = path.join(__dirname, '../config/project.config.json')
 
+module.exports.projectConfigPath = projectConfigPath
+module.exports.globalConfigPath = globalConfigPath
+
 // module.exports.QueryComment = class QueryComment {
 //     requiredOption = {
 //         '1': '是',
@@ -313,30 +316,6 @@ module.exports.getCwdProjectName = () => {
 }
 
 /**
- * @description: 设置项目配置
- * @return {*}
- */
-module.exports.setProjectConfig = () => {
-    const projectName = module.exports.getCwdProjectName()
-    const projecyConfig = module.exports.getProjectConfig()
-
-    // 读取命令行和配置文件json覆盖到原先的项目配置
-    const config = Object.assign(
-        {},
-        projecyConfig[projectName] || {},
-        module.exports.getConfigFile(),
-        module.exports.getArgvToObj()
-    )
-    // 将配置json写回文件
-    projecyConfig[projectName] = config
-    fs.writeFileSync(
-        projectConfigPath,
-        JSON.stringify(projecyConfig)
-    )
-    console.log(`设置${projectName}项目配置成功`)
-}
-
-/**
  * @description: 获取项目配置json
  * @param {*} projectName 如果传入就返回该项目名的配置
  * @return {*}
@@ -346,28 +325,6 @@ module.exports.getProjectConfig = (projectName) => {
     const fileValue = JSON.parse(fileStr)
     if (projectName) return fileValue[projectName] || {}
     return fileValue
-}
-
-/**
- * @description: 设置全局配置
- * @param {*} config
- * @return {*}
- */
-module.exports.setGlobalConfig = () => {
-
-    const config = Object.assign(
-            {},
-            module.exports.getGlobalConfig(),
-            module.exports.getConfigFile(),
-            module.exports.getArgvToObj()
-        )
-    
-    fs.writeFileSync(
-        globalConfigPath,
-        JSON.stringify(config)
-    )
-
-    console.log('设置成功')
 }
 
 /**
@@ -404,14 +361,22 @@ module.exports.getConfigFile = () => {
 
 /**
  * @description: 获取命令行运行参数,返回对象
- * @return {*}
+ * @param {object}  扩展命令行参数  
+        abridge: '',// 缩写  
+        desc: '', // 描述  
+        required: false, // 选项是否必传  
+        type: 'string', // 类型  
+        valueRequired: true, // 值是否必传，设为非必传的选项如果没有传值只传了选项，如：pnpm yapi2js --test，那么选项test值为true   
+ * @return {object}
  */
-module.exports.getArgvToObj = () => {
+module.exports.getArgvToObj = (exProgram = {}) => {
     
     const program = new Command();
 
-    Object.keys(allConfig).forEach(configKey => {
-        const configItem = { ...configDefault, ...allConfig[configKey] }
+    const config = Object.assign({}, allConfig, exProgram)
+
+    Object.keys(config).forEach(configKey => {
+        const configItem = { ...configDefault, ...config[configKey] }
         
         const method = configItem.required ? 'requiredOption' : 'option'
         const value = configItem.valueRequired ? '<value>' : '[value]'
@@ -424,7 +389,7 @@ module.exports.getArgvToObj = () => {
 
     program.parse(process.argv);
     const obj = program.opts()
-    // console.log(obj)
+    
     return obj
 }
 

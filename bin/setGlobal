@@ -1,5 +1,32 @@
 #!/usr/bin/env node
 
-const { setGlobalConfig } = require('../src/util')
+const fs = require('fs')
+const { getGlobalConfig, getConfigFile, getArgvToObj, globalConfigPath } = require('../src/util')
 
-setGlobalConfig()
+const globalConfig = getGlobalConfig()
+const argvObj = getArgvToObj({
+    get: {
+        desc: '是否获取项目配置',
+        type: 'boolean'
+    }
+})
+
+if (argvObj.get === true) {
+    console.log(`全局配置：`)
+    console.log(globalConfig)
+} else {
+    delete argvObj.get
+    const config = Object.assign(
+        {},
+        globalConfig,
+        getConfigFile(),
+        argvObj
+    )
+    
+    fs.writeFileSync(
+        globalConfigPath,
+        JSON.stringify(config)
+    )
+    
+    console.log('设置全局配置成功')
+}
