@@ -251,7 +251,7 @@ module.exports.getJSONBodyComment = (() => {
         try {
             const { properties, type, required } = JSON.parse(bodyJson)
             // console.log(properties)
-            const keys = Object.keys(properties)
+            const keys = Object.keys(properties || {})
             if (type !== 'object' || !keys.length) return ''
             // 为了捕获以下无用数据生成无用的返回数据注释
             // '{"type":"object","properties":{"key":{"type":"object","properties":{}}},"$schema":"http://json-schema.org/draft-04/schema#","description":"AjaxResult"}'
@@ -384,7 +384,9 @@ module.exports.getArgvToObj = (exProgram = {}) => {
 
         const abridge = configItem.abridge ? `-${configItem.abridge}, ` : ''
         const flags = `${abridge}--${configKey}${valueType}`
-        program[method](flags, configItem.desc)
+        const defValue = `默认值：${defaultConfig[configKey] || '无'}。 `
+        const desc = defValue + configItem.desc
+        program[method](flags, desc)
     })
 
     program.parse(process.argv);

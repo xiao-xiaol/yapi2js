@@ -22,11 +22,15 @@ module.exports = {
         password: {
             desc: '登录地址'
         },
-        timeline: {
-            desc: '比对更新时间线。create: 文件创建时间后 | update：文件最后修改时间后'
-        },
         projectId: {
             desc: '项目id'
+        },
+        forceUpdate: {
+            desc: '是否强制更新所有模块',
+            type: 'boolean', // 类型
+        },
+        timeline: {
+            desc: '比对更新时间线。create: 文件创建时间后 | update：文件最后修改时间后'
         },
         yapiUrl: {
             desc: 'yapi地址'

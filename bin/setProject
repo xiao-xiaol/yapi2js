@@ -9,7 +9,7 @@ const projectConfig = allprojectConfig[projectName] || {}
 
 const argvObj = getArgvToObj({
     get: {
-        desc: '是否获取项目配置',
+        desc: '查看项目配置',
         type: 'boolean'
     }
 })

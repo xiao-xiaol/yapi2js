@@ -54,7 +54,7 @@ class RequestMethod {
 {__COMMENT__}
 export function {__FUNCTION_NAME}({__PATH_PARAMS__}data) {
     return {HTTP_FUNCTION}{METHOD_MODE}({
-        url: '{__URL__}',
+        url: \`{__URL__}\`,
         {PARAMS_OBJECT_PROPERTY}: data{OTHER_OPTIONS}
     })
 }
@@ -258,11 +258,16 @@ class YAPI {
     // 写文件内容
     parseContent(content) {
         console.time('生成文件使用时间')
+        const addModule = []
         // 生成文件
         for (let i of content) {
             i.name = i.name.replace(/\//g, '_')
             const filePath = path.join(getAndCreateDir(this.config.outputPath), `/${i.name}.js`)
 
+            if (this.config.forceUpdate === true) {
+                this.createFile(i, filePath)
+                continue
+            }
             // 判断文件是否存在
             const fileStat = fs.statSync(filePath, { throwIfNoEntry: false })
             if (fileStat) {
@@ -272,10 +277,12 @@ class YAPI {
             } else {
                 // 文件不存在，创建新文件
                 this.createFile(i, filePath)
+                addModule.push(i.name)
             }
 
         }
 
+        if (addModule.length) console.log('新增模块：', addModule)
         console.timeEnd('生成文件使用时间')
     }
 
