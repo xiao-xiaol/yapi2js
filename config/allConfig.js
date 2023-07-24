@@ -38,6 +38,9 @@ module.exports = {
         loginPath: {
             desc: 'yapi登录路径'
         },
+        requestFuncIsDef: {
+            desc: `导入的请求方法是否是默认导入。'true' | 'false'`
+        },
         requestFuncName: {
             desc: '请求方法名称'
         },

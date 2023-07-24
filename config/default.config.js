@@ -2,6 +2,7 @@ module.exports = {
     email: '', // 登录邮箱
     password: '', // 登录地址
     projectId: '', // 项目id
+    requestFuncIsDef: 'true',
     timeline: 'update', // 比对更新时间线。create: 文件创建时间后 | update：文件最后修改时间后
     yapiUrl: 'http://yapi.nat.jxlcit.com', // yapi地址
     loginPath: '/api/user/login', // yapi登录路径

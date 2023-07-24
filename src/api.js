@@ -310,8 +310,12 @@ class YAPI {
 
     // 文件模板
     _getTemplateFile() {
-        const { requestFuncName, requestFuncPath } = this.config
-        return `import ${requestFuncName} from '${requestFuncPath}'
+        const { requestFuncName, requestFuncPath, requestFuncIsDef } = this.config
+        let importName = requestFuncName
+        if (requestFuncIsDef === 'false') {
+            importName = '{ ' + importName + ' }'
+        }
+        return `import ${importName} from '${requestFuncPath}'
 {FUNC_INTRODUCTION}
 {REQUEST_FUNCTIONS}
 `
