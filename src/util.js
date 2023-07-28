@@ -249,20 +249,39 @@ module.exports.getJSONBodyComment = (() => {
 
     return (bodyJson, { tableHeader, tableDataTemp: _tableDataTemp }) => {
         try {
-            const { properties, type, required } = JSON.parse(bodyJson)
+            const body = JSON.parse(bodyJson)
+            const { properties, type, required, items } = body
             // console.log(properties)
-            const keys = Object.keys(properties || {})
-            if (type !== 'object' || !keys.length) return ''
-            // 为了捕获以下无用数据生成无用的返回数据注释
-            // '{"type":"object","properties":{"key":{"type":"object","properties":{}}},"$schema":"http://json-schema.org/draft-04/schema#","description":"AjaxResult"}'
-            if (keys.length === 1 && !Object.keys(keys[0]?.properties || {}).length) return ''
+            if (type !== 'object' && type !== 'array') return ''
+
+            if (type === 'object') {
+                const keys = Object.keys(properties || {})
+                if (!keys.length) return ''
+                // 为了捕获以下无用数据生成无用的返回数据注释
+                // '{"type":"object","properties":{"key":{"type":"object","properties":{}}},"$schema":"http://json-schema.org/draft-04/schema#","description":"AjaxResult"}'
+                if (keys.length === 1 && !Object.keys(keys[0]?.properties || {}).length) return ''
+            }
 
             requiredList = required || []
-
             tableDataTemp = _tableDataTemp
             let tableStr = tableHeader
-            tableStr += getTableDataByObject(properties)
+
+            if (type === 'object') {
+                tableStr += getTableDataByObject(properties)
+            } else {
+                tableStr += getTableDataByObject({ array: body })
+            }
+
             return tableStr
+            // } else if (type === 'array') {
+
+            //     requiredList = items.required || []
+            //     tableDataTemp = _tableDataTemp
+            //     let tableStr = tableHeader
+            //     tableStr += getTableData(properties[key], key, prefixer)
+            //     tableStr += getTableDataByArray(items)
+            //     return tableStr
+            // }
         } catch (error) {
             console.log(error)
             return ''
